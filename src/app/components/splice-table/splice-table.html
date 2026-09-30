@@ -1,0 +1,49 @@
+<div class="splices-head">
+  <h2 id="splicesTitle">Kötések</h2>
+  <p>{{ summary() }}</p>
+  <label>
+    <input type="checkbox" [checked]="store.pairOnly()" [disabled]="!store.hasPair()" (change)="onPairOnly($event)">
+    Csak a kiválasztott kábelpár
+  </label>
+</div>
+
+@if (!store.device()) {
+  <p class="table-empty">A kötések a berendezés kiválasztása után jelennek meg itt.</p>
+} @else if (rows().length === 0) {
+  <p class="table-empty">Még nincs kötés. Húzz egy bal oldali szálvéget egy jobb oldali szabad szálra, vagy kattints egymás után a két szálvégre.</p>
+} @else {
+  <div class="table-wrap">
+    <table aria-labelledby="splicesTitle">
+      <thead>
+        <tr><th></th><th colspan="3">Egyik oldal</th><th colspan="3" class="grp-b">Másik oldal</th><th></th></tr>
+        <tr>
+          <th>#</th><th>Kábel</th><th>Pászma</th><th>Szál (sorszám)</th>
+          <th class="grp-b">Kábel</th><th>Pászma</th><th>Szál (sorszám)</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.id; let i = $index) {
+          <tr [class.current]="r.current" [class.hl]="store.highlightId() === r.id"
+            title="Kattints a kábelpár megnyitásához"
+            (click)="store.reveal(r.id)"
+            (mouseenter)="store.hoverId.set(r.id)"
+            (mouseleave)="store.hoverId.set(null)">
+            <td class="idx">{{ i + 1 }}.</td>
+            <ng-container *ngTemplateOutlet="endCells; context: { $implicit: r.a, grp: false }" />
+            <ng-container *ngTemplateOutlet="endCells; context: { $implicit: r.b, grp: true }" />
+            <td><button type="button" class="del" (click)="onDelete($event, r.id)">Bontás</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<ng-template #endCells let-e let-grp="grp">
+  <td [class.grp-b]="grp"><strong>{{ e.cableId }}</strong></td>
+  <td><span class="sw" [style.background]="e.tubeDot"></span>{{ e.tube }}. {{ e.tubeLabel }}</td>
+  <td>
+    <span class="sw" [style.background]="e.fiberDot"></span>{{ e.fiber }}. {{ e.fiberLabel }}
+    @if (e.number) { <span class="muted">({{ e.number }}.)</span> }
+  </td>
+</ng-template>

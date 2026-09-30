@@ -1,0 +1,71 @@
+@if (!store.device()) {
+  <div class="empty-stage">
+    <strong>Válassz passzív berendezést</strong>
+    A berendezés kiválasztása után a hozzá rendelt kábelek közül választhatod ki a kiinduló kábelt.
+  </div>
+} @else if (!store.leftCable()) {
+  <div class="empty-stage">
+    <strong>Válassz kiinduló kábelt</strong>
+    A kiválasztott kábel szálai a bal oldalon jelennek meg a színsor szerint.
+  </div>
+} @else {
+  <div class="stage-wrap">
+    <div class="stage" #stage>
+      <app-cable-panel
+        side="left"
+        aria-label="Kiinduló kábel szálai"
+        [cable]="store.leftCable()"
+        [otherCableId]="store.rightId()"
+        (handleDown)="onHandleDown($event)" />
+
+      <div class="mid">
+        @if (store.rightCable()) {
+          <p>Húzd a szálvéget a másik kábel egy szabad szálára, vagy kattints egymás után a két szálvégre. Egy kötésre kattintva bontod.</p>
+          <div class="legend">
+            <span><i></i>szabad</span>
+            <span><i class="l"></i>a párban kötve</span>
+            <span><i class="b"></i>más kábelhez kötve</span>
+          </div>
+        } @else {
+          <p>A csatlakozó kábelt a jobb oldali listából választhatod.</p>
+        }
+      </div>
+
+      <app-cable-panel
+        side="right"
+        aria-label="Csatlakozó kábel szálai"
+        [cable]="store.rightCable()"
+        [otherCableId]="store.leftId()"
+        [options]="store.rightOptions()"
+        [emptyText]="'Válaszd ki, melyik kábelhez kötöd a ' + store.leftId() + ' szálait.'"
+        (cableChange)="store.selectRight($event)"
+        (handleDown)="onHandleDown($event)" />
+
+      <svg class="wires" aria-hidden="true"
+        [attr.width]="size().w" [attr.height]="size().h"
+        [attr.viewBox]="'0 0 ' + size().w + ' ' + size().h">
+        <defs>
+          @for (w of wires(); track w.id) {
+            <linearGradient [attr.id]="'g_' + w.id" gradientUnits="userSpaceOnUse"
+              [attr.x1]="w.from.x" [attr.y1]="w.from.y" [attr.x2]="w.to.x" [attr.y2]="w.to.y">
+              <stop offset="0" [attr.stop-color]="w.fromColor" />
+              <stop offset="1" [attr.stop-color]="w.toColor" />
+            </linearGradient>
+          }
+        </defs>
+        @for (w of wires(); track w.id) {
+          <g class="conn" [class.hl]="store.highlightId() === w.id"
+            (click)="store.remove(w.id)"
+            (mouseenter)="store.hoverId.set(w.id)"
+            (mouseleave)="store.hoverId.set(null)">
+            <title>{{ w.title }}</title>
+            <path class="ln-casing" [attr.d]="w.d" />
+            <path class="ln-core" [attr.d]="w.d" [attr.stroke]="gradientRef(w.id)" />
+            <path class="ln-hit" [attr.d]="w.d" />
+          </g>
+        }
+        <path class="ln-temp" [attr.d]="tempPath() || null" />
+      </svg>
+    </div>
+  </div>
+}

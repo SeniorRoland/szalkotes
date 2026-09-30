@@ -1,0 +1,65 @@
+<header class="panel-head">
+  @if (options(); as opts) {
+    <label class="ph-role" [for]="selectId">Csatlakozó kábel</label>
+    <select [id]="selectId" (change)="onSelect($event)">
+      <option value="" [selected]="!cable()">Válassz kábelt…</option>
+      @for (o of opts; track o.id) {
+        <option [value]="o.id" [selected]="o.id === cable()?.id">{{ cableLabel(o) }}</option>
+      }
+    </select>
+  } @else {
+    <span class="ph-role">Kiinduló kábel</span>
+    <span class="ph-id">{{ cable()?.id }}</span>
+  }
+  @if (cable(); as c) {
+    <p class="ph-meta">{{ c.route }}<br>{{ meta() }}</p>
+    @if (statText()) {
+      <p class="ph-stat">{{ statText() }}</p>
+    }
+  }
+</header>
+
+@if (cable()) {
+  @for (t of tubes(); track t.tube) {
+    <section class="tube" [class.collapsed]="t.collapsed">
+      <button type="button" class="tube-head" [attr.aria-expanded]="!t.collapsed" (click)="onToggle(t.tube)">
+        <span class="caret"></span>
+        <span class="tube-bar" [style.background]="t.bar"></span>
+        <span class="tube-title">{{ t.tube }}. pászma</span>
+        <span class="tube-color">{{ t.color.label }}</span>
+        <span class="tube-count" title="Kötött szálak / összes szál">{{ t.linkedCount }}/{{ t.fibers.length }}</span>
+        <span class="tube-anchor" [class.has-links]="t.pairCount > 0" [attr.data-anchor]="cable()!.id + '|' + t.tube"></span>
+      </button>
+      @if (!t.collapsed) {
+        <div class="fibers">
+          @for (f of t.fibers; track f.key) {
+            <div class="fiber" [class.hl]="store.highlightedKeys().has(f.key)" [attr.data-key]="f.key">
+              <span class="num">{{ f.fiber }}</span>
+              <span class="fname">{{ f.color.label }}</span>
+              <span class="gnum">{{ f.number }}.</span>
+              <span class="strand" [style.background]="f.strand"></span>
+              @if (f.status === 'busy' && f.other; as o) {
+                <span class="busy-tag" [title]="'Kötve: ' + o.cableId + ', ' + o.tube + '. pászma, ' + o.fiber + '. szál'">
+                  {{ o.cableId }}: {{ o.tube }}/{{ o.fiber }}
+                </span>
+              }
+              <button type="button" class="handle"
+                [attr.data-key]="f.key" [attr.data-side]="side()"
+                [class.is-linked]="f.status === 'linked'"
+                [class.is-busy]="f.status === 'busy'"
+                [class.is-pending]="store.pending()?.key === f.key"
+                [class.is-target]="store.dropTarget() === f.key"
+                [style.background]="f.dot"
+                [attr.aria-label]="f.aria"
+                (pointerdown)="onPointerDown($event, f.key)"
+                (keydown.enter)="onKey($event, f.key)"
+                (keydown.space)="onKey($event, f.key)"></button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+} @else {
+  <p class="panel-empty">{{ emptyText() }}</p>
+}

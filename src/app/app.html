@@ -1,0 +1,62 @@
+<header class="topbar">
+  <div class="brand">
+    <svg width="40" height="30" viewBox="0 0 40 30" aria-hidden="true">
+      <path d="M2 5 C16 5 16 15 26 15" fill="none" stroke="#1F5FBF" stroke-width="3" stroke-linecap="round" />
+      <path d="M2 15 H26" fill="none" stroke="#F07F13" stroke-width="3" stroke-linecap="round" />
+      <path d="M2 25 C16 25 16 15 26 15" fill="none" stroke="#2F9A3E" stroke-width="3" stroke-linecap="round" />
+      <circle cx="31" cy="15" r="6" fill="none" stroke="currentColor" stroke-width="2.4" />
+    </svg>
+    <div>
+      <h1>Szálkötés</h1>
+      <p>Passzív optikai berendezés kötési terve</p>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="deviceSel">Passzív berendezés</label>
+    <select id="deviceSel" (change)="onDevice($event)">
+      <option value="" [selected]="!store.deviceId()">Válassz berendezést…</option>
+      @for (d of store.devices(); track d.id) {
+        <option [value]="d.id" [selected]="d.id === store.deviceId()">{{ d.id }} – {{ d.type }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="leftSel">Kiinduló kábel</label>
+    <select id="leftSel" [disabled]="!store.device()" (change)="onLeft($event)">
+      <option value="" [selected]="!store.leftId()">
+        {{ store.device() ? 'Válassz kábelt…' : 'Előbb válassz berendezést' }}
+      </option>
+      @for (c of store.device()?.cables ?? []; track c.id) {
+        <option [value]="c.id" [selected]="c.id === store.leftId()">{{ cableLabel(c) }}</option>
+      }
+    </select>
+  </div>
+
+  <p class="device-meta">{{ deviceMeta() }}</p>
+</header>
+
+<main>
+  <div class="toolbar">
+    <div class="pair">
+      @if (store.hasPair()) {
+        <strong>{{ store.leftId() }}</strong><span class="sep">és</span><strong>{{ store.rightId() }}</strong>
+        <span class="cnt">{{ store.pairSplices().length }} kötés</span>
+      }
+    </div>
+    @if (store.hasPair()) {
+      <button type="button" class="btn" (click)="store.swapSides()">Oldalak cseréje</button>
+      <button type="button" class="btn" [disabled]="!canAuto()" (click)="store.autoConnect()">Szabad szálak kötése 1:1</button>
+      <button type="button" class="btn danger" [disabled]="store.pairSplices().length === 0" (click)="store.clearPair()">
+        Kábelpár kötéseinek bontása
+      </button>
+    }
+    @if (store.device()) {
+      <button type="button" class="btn" title="Ctrl+Z" [disabled]="!store.canUndo()" (click)="store.undo()">Visszavonás</button>
+    }
+  </div>
+
+  <app-splice-board />
+  <app-splice-table />
+</main>

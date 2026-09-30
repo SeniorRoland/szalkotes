@@ -1,0 +1,50 @@
+/* ---- Színtokenek: világos és sötét téma ---- */
+@mixin dark-tokens {
+  --bg: #12171C; --panel: #1B2229; --panel-2: #222B33; --ink: #E4EAF0; --muted: #98A6B3; --faint: #56636F;
+  --rule: #2D3741; --accent: #5AA2F5; --accent-soft: rgba(90, 162, 245, .17); --danger: #F2867E;
+  --casing: #71808E; --tray: #161C22; --grid: rgba(228, 234, 240, .045); --edge: rgba(255, 255, 255, .4);
+  color-scheme: dark;
+}
+
+:root {
+  --bg: #E7ECF0; --panel: #FFFFFF; --panel-2: #F3F5F7; --ink: #17212B; --muted: #5A6977; --faint: #A9B4BE;
+  --rule: #D4DBE2; --accent: #0B63CE; --accent-soft: rgba(11, 99, 206, .12); --danger: #B3261E;
+  --casing: #27313B; --tray: #DDE4EA; --grid: rgba(23, 33, 43, .06); --edge: rgba(0, 0, 0, .38);
+  --font: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-narrow: "Barlow Semi Condensed", "Arial Narrow", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { @include dark-tokens; }
+}
+:root[data-theme="dark"] { @include dark-tokens; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.45;
+}
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Közös elemek ---- */
+.btn {
+  padding: 7px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--panel);
+  font-weight: 500;
+  cursor: pointer;
+  &:hover:not(:disabled) { border-color: var(--accent); }
+  &:disabled { opacity: .45; cursor: not-allowed; }
+  &.danger { color: var(--danger); }
+}
+.sw {
+  display: inline-block; width: 12px; height: 12px; margin-right: 7px;
+  border-radius: 50%; border: 1px solid var(--edge); vertical-align: -1px;
+}
+.muted { color: var(--muted); }

@@ -1,0 +1,38 @@
+:host { display: block; }
+
+.topbar {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 28px;
+  padding: 16px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
+}
+.brand {
+  display: flex; align-items: center; gap: 12px; margin-right: 12px;
+  svg { flex: none; }
+  h1 { margin: 0; font-size: 23px; font-weight: 700; letter-spacing: -.01em; line-height: 1.1; }
+  p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+}
+.field {
+  label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--muted); }
+  select {
+    min-width: 260px; max-width: 100%; padding: 8px 10px;
+    border: 1px solid var(--rule); border-radius: 6px; background: var(--panel-2); cursor: pointer;
+    &:disabled { cursor: not-allowed; opacity: .6; }
+  }
+}
+.device-meta { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+
+main { max-width: 1500px; margin: 0 auto; padding: 16px 24px 40px; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; min-height: 40px; margin-bottom: 12px; }
+.pair {
+  margin-right: auto;
+  .sep { margin: 0 6px; color: var(--muted); }
+  .cnt { margin-left: 10px; color: var(--muted); }
+}
+
+@media (max-width: 720px) {
+  .topbar { padding: 14px 16px; }
+  main { padding: 12px 12px 32px; }
+  .field { flex: 1 1 100%; select { width: 100%; min-width: 0; } }
+}

@@ -1,0 +1,54 @@
+:host { display: block; }
+
+.stage-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background-color: var(--tray);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(110px, .75fr) minmax(260px, 1fr);
+  align-items: start;
+  min-width: 660px;
+  padding: 14px;
+}
+
+.empty-stage {
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--faint);
+  border-radius: 10px;
+  background: var(--panel);
+  strong { display: block; color: var(--ink); font-size: 18px; margin-bottom: 4px; }
+}
+
+.mid {
+  position: sticky; top: 12px; z-index: 1;
+  padding: 6px 14px;
+  text-align: center; color: var(--muted); font-size: 13.5px;
+  p { margin: 0 0 12px; }
+}
+.legend {
+  display: inline-grid; gap: 6px; padding: 10px 12px;
+  text-align: left; font-size: 13px;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+  span { display: flex; align-items: center; gap: 8px; }
+  i { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--casing); background: var(--faint); }
+  i.l { box-shadow: 0 0 0 2px var(--panel), 0 0 0 3.5px var(--casing); }
+  i.b { opacity: .4; }
+}
+
+/* A vonalréteg a panelek fölött van, a szálvégek (z-index: 3) viszont fölötte maradnak. */
+.wires { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; overflow: visible; }
+.ln-casing { fill: none; stroke: var(--casing); stroke-width: 6.5; stroke-linecap: round; }
+.ln-core { fill: none; stroke-width: 3.4; stroke-linecap: round; }
+.ln-hit { fill: none; stroke: transparent; stroke-width: 15; pointer-events: stroke; cursor: pointer; }
+.conn.hl .ln-casing { stroke: var(--accent); stroke-width: 9; }
+.ln-temp { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 6 5; stroke-linecap: round; }
